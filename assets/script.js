@@ -92,6 +92,10 @@ window.addEventListener('click', (e) => {
 
 // Display pagination buttons
 function displayPagination() {
+    // remove old pagination if exists
+    const old = document.querySelector('.pagination');
+    if(old) old.remove();
+
     const paginationDiv = document.createElement('div');
     paginationDiv.classList.add('pagination');
 
@@ -109,7 +113,7 @@ function displayPagination() {
     // Next button
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Next ➡';
-    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.disabled = currentPage >= totalPages;
     nextBtn.addEventListener('click', () => {
         if(currentPage < totalPages) {
             currentPage++;
@@ -121,8 +125,7 @@ function displayPagination() {
     paginationDiv.appendChild(document.createTextNode(` Page ${currentPage} of ${totalPages} `));
     paginationDiv.appendChild(nextBtn);
 
-    // Add pagination to the page
-    const existingPagination = document.querySelector('.pagination');
-    if(existingPagination) existingPagination.remove(); // remove old
-    moviesContainer.after(paginationDiv);
+    // Insert after moviesContainer
+    moviesContainer.parentNode.insertBefore(paginationDiv, moviesContainer.nextSibling);
 }
+
