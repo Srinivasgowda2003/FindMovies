@@ -35,6 +35,8 @@
     <footer>
         <p>Project by Srinivas G | Built with HTML, CSS, JS</p>
     </footer>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/script.js" defer></script>
 
 </body>
 </html>
