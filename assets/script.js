@@ -6,7 +6,11 @@ const modalBody = document.getElementById('modalBody');
 const closeBtn = document.querySelector('.closeBtn');
 const themeToggle = document.getElementById('themeToggle');
 
-const API_KEY = "6f6242e6"; // Get free API key from http://www.omdbapi.com/
+const API_KEY = "6f6242e6"; // replace with your key
+
+let currentPage = 1;
+let lastQuery = "";
+let totalPages = 1;
 
 // Theme toggle
 themeToggle.addEventListener('click', () => {
@@ -18,32 +22,28 @@ themeToggle.addEventListener('click', () => {
 // Search button click
 searchBtn.addEventListener('click', () => {
     const query = searchInput.value.trim();
-    if(query) fetchMovies(query);
+    if(query) {
+        currentPage = 1;
+        lastQuery = query;
+        fetchMovies(query, currentPage);
+    }
 });
 
-// Fetch movies
-async function fetchMovies(query) {
+// Fetch movies with pagination
+async function fetchMovies(query, page=1) {
     moviesContainer.innerHTML = 'Loading...';
     try {
-        // Try multiple search first
-        let res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
-        let data = await res.json();
+        const res = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=${API_KEY}`);
+        const data = await res.json();
 
-        if (data.Response === "True") {
+        if(data.Response === "True") {
             displayMovies(data.Search);
+            totalPages = Math.ceil(data.totalResults / 10);
+            displayPagination();
         } else {
-            // If not found, try exact match
-            res = await fetch(`https://www.omdbapi.com/?t=${query}&apikey=${API_KEY}`);
-            data = await res.json();
-
-            if (data.Response === "True") {
-                // Wrap in array so displayMovies works
-                displayMovies([data]);
-            } else {
-                moviesContainer.innerHTML = `<p>${data.Error}</p>`;
-            }
+            moviesContainer.innerHTML = `<p>${data.Error}</p>`;
         }
-    } catch (err) {
+    } catch(err) {
         moviesContainer.innerHTML = `<p>Error fetching movies.</p>`;
     }
 }
@@ -89,3 +89,40 @@ closeBtn.addEventListener('click', () => movieModal.style.display = 'none');
 window.addEventListener('click', (e) => {
     if(e.target === movieModal) movieModal.style.display = 'none';
 });
+
+// Display pagination buttons
+function displayPagination() {
+    const paginationDiv = document.createElement('div');
+    paginationDiv.classList.add('pagination');
+
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '⬅ Previous';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener('click', () => {
+        if(currentPage > 1) {
+            currentPage--;
+            fetchMovies(lastQuery, currentPage);
+        }
+    });
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next ➡';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener('click', () => {
+        if(currentPage < totalPages) {
+            currentPage++;
+            fetchMovies(lastQuery, currentPage);
+        }
+    });
+
+    paginationDiv.appendChild(prevBtn);
+    paginationDiv.appendChild(document.createTextNode(` Page ${currentPage} of ${totalPages} `));
+    paginationDiv.appendChild(nextBtn);
+
+    // Add pagination to the page
+    const existingPagination = document.querySelector('.pagination');
+    if(existingPagination) existingPagination.remove(); // remove old
+    moviesContainer.after(paginationDiv);
+}
