@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Movies Project</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body class="light-theme">
+
+    <header>
+        <h1>Find Movies</h1>
+        <p>Search your favorite movies and see details!</p>
+        <button id="themeToggle">🌙 Dark Mode</button>
+    </header>
+
+    <section class="search">
+        <input type="text" id="searchInput" placeholder="Type movie name...">
+        <button id="searchBtn">Search</button>
+    </section>
+
+    <section id="moviesContainer">
+        <!-- Movie cards appear here -->
+    </section>
+
+    <!-- Modal for movie details -->
+    <div id="movieModal" class="modal">
+        <div class="modal-content">
+            <span class="closeBtn">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Project by Srinivas G | Built with HTML, CSS, JS</p>
+    </footer>
+
+</body>
+</html>
 
