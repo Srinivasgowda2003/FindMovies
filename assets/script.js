@@ -30,21 +30,26 @@ searchBtn.addEventListener('click', () => {
 });
 
 // Fetch movies with pagination
-async function fetchMovies(query, page=1) {
-    moviesContainer.innerHTML = 'Loading...';
+// Show movie details in modal
+async function showDetails(id) {
     try {
-        const res = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=${API_KEY}`);
+        const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`);
         const data = await res.json();
+        modalBody.innerHTML = `
+            <h2>${data.Title}</h2>
+            <img src="${data.Poster !== "N/A" ? data.Poster : 'https://via.placeholder.com/200x300'}" alt="${data.Title}">
+            <p><strong>Year:</strong> ${data.Year}</p>
+            <p><strong>Genre:</strong> ${data.Genre}</p>
+            <p><strong>Director:</strong> ${data.Director}</p>
+            <p><strong>Actors:</strong> ${data.Actors}</p>
+            <p><strong>Plot:</strong> ${data.Plot}</p>
+        `;
+        movieModal.style.display = 'block';
 
-        if(data.Response === "True") {
-            displayMovies(data.Search);
-            totalPages = Math.ceil(data.totalResults / 10);
-            displayPagination();
-        } else {
-            moviesContainer.innerHTML = `<p>${data.Error}</p>`;
-        }
-    } catch(err) {
-        moviesContainer.innerHTML = `<p>Error fetching movies.</p>`;
+        // 👇 Add a new history state when modal opens
+        history.pushState({ modalOpen: true }, "", "#movie");
+    } catch (err) {
+        alert('Error fetching movie details.');
     }
 }
 
@@ -84,11 +89,25 @@ async function showDetails(id) {
     }
 }
 
-// Close modal
-closeBtn.addEventListener('click', () => movieModal.style.display = 'none');
-window.addEventListener('click', (e) => {
-    if(e.target === movieModal) movieModal.style.display = 'none';
+function closeModal() {
+    movieModal.style.display = 'none';
+    if (location.hash === "#movie") {
+        history.back(); // remove fake modal state
+    }
+}
+
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", (e) => {
+    if (e.target === movieModal) closeModal();
 });
+
+// 👇 Detect back button
+window.addEventListener("popstate", (event) => {
+    if (!event.state || !event.state.modalOpen) {
+        movieModal.style.display = "none";
+    }
+});
+
 
 // Display pagination buttons
 function displayPagination() {
