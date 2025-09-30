@@ -6,7 +6,7 @@ const modalBody = document.getElementById('modalBody');
 const closeBtn = document.querySelector('.closeBtn');
 const themeToggle = document.getElementById('themeToggle');
 
-const API_KEY = '6f6242e6'; // Get free API key from http://www.omdbapi.com/
+const API_KEY = "6f6242e6"; // Get free API key from http://www.omdbapi.com/
 
 // Theme toggle
 themeToggle.addEventListener('click', () => {
