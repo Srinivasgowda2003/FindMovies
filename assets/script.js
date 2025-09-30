@@ -9,7 +9,7 @@ const themeToggle = document.getElementById("themeToggle");
 const loading = document.getElementById("loading");
 
 // Your OMDb API Key
-const API_KEY = "YOUR_REAL_API_KEY_HERE";
+const API_KEY = "6f6242e6";
 
 // Pagination variables
 let currentPage = 1;
