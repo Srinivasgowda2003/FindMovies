@@ -29,12 +29,12 @@ searchBtn.addEventListener('click', () => {
     }
 });
 
-// Fetch movies with pagination
 // Show movie details in modal
 async function showDetails(id) {
     try {
         const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`);
         const data = await res.json();
+
         modalBody.innerHTML = `
             <h2>${data.Title}</h2>
             <img src="${data.Poster !== "N/A" ? data.Poster : 'https://via.placeholder.com/200x300'}" alt="${data.Title}">
@@ -44,30 +44,46 @@ async function showDetails(id) {
             <p><strong>Actors:</strong> ${data.Actors}</p>
             <p><strong>Plot:</strong> ${data.Plot}</p>
         `;
-        movieModal.style.display = 'block';
 
-        // 👇 Add a new history state when modal opens
+        movieModal.style.display = "block";
+
+        // Push a fake history state when modal opens
         history.pushState({ modalOpen: true }, "", "#movie");
     } catch (err) {
-        alert('Error fetching movie details.');
+        alert("Error fetching movie details.");
     }
 }
 
-// Display movie cards
-function displayMovies(movies) {
-    moviesContainer.innerHTML = '';
-    movies.forEach(movie => {
-        const movieEl = document.createElement('div');
-        movieEl.classList.add('movie');
-        movieEl.innerHTML = `
-            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300'}" alt="${movie.Title}">
-            <h3>${movie.Title}</h3>
-            <p>⭐ ${movie.Year}</p>
-        `;
-        movieEl.addEventListener('click', () => showDetails(movie.imdbID));
-        moviesContainer.appendChild(movieEl);
-    });
+// Function to close modal
+function closeModal() {
+    movieModal.style.display = "none";
 }
+
+// Close modal on X button
+closeBtn.addEventListener("click", () => {
+    closeModal();
+    if (history.state && history.state.modalOpen) {
+        history.back();
+    }
+});
+
+// Close modal if clicked outside
+window.addEventListener("click", (e) => {
+    if (e.target === movieModal) {
+        closeModal();
+        if (history.state && history.state.modalOpen) {
+            history.back();
+        }
+    }
+});
+
+// Handle Back button correctly
+window.addEventListener("popstate", (event) => {
+    if (!event.state || !event.state.modalOpen) {
+        closeModal();
+    }
+});
+
 
 // Show movie details in modal
 async function showDetails(id) {
