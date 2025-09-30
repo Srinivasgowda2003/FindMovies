@@ -25,11 +25,25 @@ searchBtn.addEventListener('click', () => {
 async function fetchMovies(query) {
     moviesContainer.innerHTML = 'Loading...';
     try {
-        const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
-        const data = await res.json();
-        if(data.Response === "True") displayMovies(data.Search);
-        else moviesContainer.innerHTML = `<p>${data.Error}</p>`;
-    } catch(err) {
+        // Try multiple search first
+        let res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
+        let data = await res.json();
+
+        if (data.Response === "True") {
+            displayMovies(data.Search);
+        } else {
+            // If not found, try exact match
+            res = await fetch(`https://www.omdbapi.com/?t=${query}&apikey=${API_KEY}`);
+            data = await res.json();
+
+            if (data.Response === "True") {
+                // Wrap in array so displayMovies works
+                displayMovies([data]);
+            } else {
+                moviesContainer.innerHTML = `<p>${data.Error}</p>`;
+            }
+        }
+    } catch (err) {
         moviesContainer.innerHTML = `<p>Error fetching movies.</p>`;
     }
 }
