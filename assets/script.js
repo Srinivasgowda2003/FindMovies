@@ -1,92 +1,43 @@
-// Elements
-const searchBtn = document.getElementById("searchBtn");
+const API_KEY = "6f6242e6"; // 🔑 Replace with your OMDB API key
 const searchInput = document.getElementById("searchInput");
-const moviesContainer = document.getElementById("moviesContainer");
-const movieModal = document.getElementById("movieModal");
+const searchBtn = document.getElementById("searchBtn");
+const movieList = document.getElementById("movieList");
+const modal = document.getElementById("movieModal");
 const modalBody = document.getElementById("modalBody");
-const closeBtn = document.querySelector(".closeBtn");
-const themeToggle = document.getElementById("themeToggle");
-const loading = document.getElementById("loading");
+const closeBtn = document.querySelector(".close");
 
-// Your OMDb API Key
-const API_KEY = "6f6242e6";
-
-// Pagination variables
 let currentPage = 1;
 let lastQuery = "";
 
-// -----------------------
-// Theme Mode Persistence
-// -----------------------
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark-theme");
-    document.body.classList.remove("light-theme");
-    themeToggle.textContent = "☀️ Light Mode";
-}
-
-themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-theme");
-    document.body.classList.toggle("light-theme");
-    const isDark = document.body.classList.contains("dark-theme");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-    themeToggle.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-});
-
-// -----------------------
-// Search Functionality
-// -----------------------
-searchBtn.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    if(query) {
-        currentPage = 1;
-        lastQuery = query;
-        fetchMovies(query, currentPage);
-    }
-});
-
-// Enter key search
-searchInput.addEventListener("keypress", (e) => {
-    if(e.key === "Enter") searchBtn.click();
-});
-
-// -----------------------
-// Fetch Movies
-// -----------------------
-async function fetchMovies(query) {
-    moviesContainer.innerHTML = 'Loading...';
+// Fetch movies from API
+async function fetchMovies(query, page = 1) {
     try {
-        const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
+        const res = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=${API_KEY}`);
         const data = await res.json();
-        console.log(data); // 👈 check what API returns
-        if(data.Response === "True") displayMovies(data.Search);
-        else moviesContainer.innerHTML = `<p>${data.Error}</p>`;
-    } catch(err) {
-        moviesContainer.innerHTML = `<p>Error fetching movies: ${err.message}</p>`;
+
+        if (data.Response === "True") {
+            movieList.innerHTML = "";
+            data.Search.forEach(movie => {
+                const movieCard = document.createElement("div");
+                movieCard.classList.add("movie-card");
+                movieCard.innerHTML = `
+                    <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300'}" alt="${movie.Title}">
+                    <h3>${movie.Title}</h3>
+                    <p>${movie.Year}</p>
+                `;
+                movieCard.addEventListener("click", () => showDetails(movie.imdbID));
+                movieList.appendChild(movieCard);
+            });
+            displayPagination(data.totalResults, query);
+        } else {
+            movieList.innerHTML = `<p class="not-found">❌ No results found for "${query}"</p>`;
+        }
+    } catch (err) {
+        console.error("Error fetching movies:", err);
     }
 }
 
-
-// -----------------------
-// Display Movies
-// -----------------------
-function displayMovies(movies) {
-    moviesContainer.innerHTML = "";
-    movies.forEach(movie => {
-        const movieEl = document.createElement("div");
-        movieEl.classList.add("movie");
-        movieEl.innerHTML = `
-            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300'}" alt="${movie.Title}">
-            <h3>${movie.Title}</h3>
-            <p>⭐ ${movie.Year}</p>
-        `;
-        movieEl.addEventListener("click", () => showDetails(movie.imdbID));
-        moviesContainer.appendChild(movieEl);
-    });
-}
-
-// -----------------------
-// Show Movie Details in Modal
-// -----------------------
+// Show movie details
 async function showDetails(id) {
     try {
         const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`);
@@ -99,60 +50,54 @@ async function showDetails(id) {
             <p><strong>Genre:</strong> ${data.Genre}</p>
             <p><strong>Director:</strong> ${data.Director}</p>
             <p><strong>Actors:</strong> ${data.Actors}</p>
-            <p><strong>IMDb Rating:</strong> ${data.imdbRating}</p>
             <p><strong>Plot:</strong> ${data.Plot}</p>
         `;
+        modal.style.display = "block";
 
-        movieModal.style.display = "block";
-
-        // Push fake history state so Back button works
+        // Push state for back button
         history.pushState({ modalOpen: true }, "", "#movie");
-    } catch(err) {
+    } catch (err) {
         alert("Error fetching movie details.");
     }
 }
 
-// -----------------------
-// Close Modal
-// -----------------------
-function closeModal() {
-    movieModal.style.display = "none";
-}
-
+// Close modal
 closeBtn.addEventListener("click", () => {
-    closeModal();
-    if(history.state && history.state.modalOpen) history.back();
+    modal.style.display = "none";
+    history.back();
 });
 
 window.addEventListener("click", (e) => {
-    if(e.target === movieModal) {
-        closeModal();
-        if(history.state && history.state.modalOpen) history.back();
+    if (e.target === modal) {
+        modal.style.display = "none";
+        history.back();
     }
 });
 
-window.addEventListener("popstate", () => {
-    closeModal();
+// Handle back button (close modal instead of exiting site)
+window.addEventListener("popstate", (e) => {
+    if (!e.state?.modalOpen) {
+        modal.style.display = "none";
+    }
 });
 
-// -----------------------
-// Pagination
-// -----------------------
-function displayPagination(totalResults) {
+// Display pagination
+function displayPagination(totalResults, query) {
     const old = document.querySelector(".pagination");
-    if(old) old.remove();
+    if (old) old.remove();
 
-    const totalPages = Math.ceil(totalResults / 10); // 10 results per page
     const paginationDiv = document.createElement("div");
     paginationDiv.classList.add("pagination");
+
+    const totalPages = Math.ceil(totalResults / 10);
 
     const prevBtn = document.createElement("button");
     prevBtn.textContent = "⬅ Previous";
     prevBtn.disabled = currentPage === 1;
     prevBtn.addEventListener("click", () => {
-        if(currentPage > 1) {
+        if (currentPage > 1) {
             currentPage--;
-            fetchMovies(lastQuery, currentPage);
+            fetchMovies(query, currentPage);
         }
     });
 
@@ -160,14 +105,30 @@ function displayPagination(totalResults) {
     nextBtn.textContent = "Next ➡";
     nextBtn.disabled = currentPage === totalPages;
     nextBtn.addEventListener("click", () => {
-        if(currentPage < totalPages) {
+        if (currentPage < totalPages) {
             currentPage++;
-            fetchMovies(lastQuery, currentPage);
+            fetchMovies(query, currentPage);
         }
     });
 
     paginationDiv.appendChild(prevBtn);
+    paginationDiv.appendChild(document.createTextNode(` Page ${currentPage} of ${totalPages} `));
     paginationDiv.appendChild(nextBtn);
-    moviesContainer.after(paginationDiv);
+
+    movieList.after(paginationDiv);
 }
+
+// Search
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if (query) {
+        lastQuery = query;
+        currentPage = 1;
+        fetchMovies(query, currentPage);
+    }
+});
+
+searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") searchBtn.click();
+});
 
