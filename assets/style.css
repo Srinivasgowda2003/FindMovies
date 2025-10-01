@@ -1,3 +1,46 @@
+:root {
+  --bg: #f9f9f9;
+  --text: #111;
+  --card: #ffffff;
+  --header: #4caf50;
+  --btn-bg: #4caf50;
+  --muted: #666;
+  --modal-bg: #fff;
+  --footer-bg: #333;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0f;
+  --text: #f1f1f1;
+  --card: #1b1b1b;
+  --header: #134e22;
+  --btn-bg: #2e8b57;
+  --muted: #aaa;
+  --modal-bg: #1b1b1b;
+  --footer-bg: #111;
+}
+
+/* use vars everywhere */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+.header, header {
+  background: var(--header);
+  color: var(--text);
+}
+.movie, .movie-card {
+  background: var(--card);
+  color: var(--text);
+}
+.search button {
+  background: var(--btn-bg);
+  color: #fff;
+}
+.modal-content { background: var(--modal-bg); color: var(--text); }
+.footer { background: var(--footer-bg); color: #fff; }
+.search input { background: transparent; color: var(--text); border-color: #ccc; }
+
 body {
     font-family: Arial, sans-serif;
     background: #f4f4f4;
