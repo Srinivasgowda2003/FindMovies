@@ -1,41 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Find Movies Project</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  <script src="assets/script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindMovies - Discover Your Next Favorite Movie</title>
+    <meta name="description" content="Search and discover movies with detailed information, ratings, and more">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="light-theme">
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <h1 class="logo">🎬 FindMovies</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-filter="all">All</button>
+                    <button class="nav-btn" data-filter="movie">Movies</button>
+                    <button class="nav-btn" data-filter="series">TV Series</button>
+                    <button class="nav-btn" id="favoritesBtn">Favorites ❤️</button>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-  <header class="header">
-    <h1>🎬 Find Movies</h1>
-    <p>Discover your favorite movies with real-time info</p>
-    <button id="themeToggle">🌙 Dark Mode</button>
-  </header>
-
-  <section class="search">
-    <input type="text" id="searchInput" placeholder="🔍 Type a movie name...">
-    <button id="searchBtn">Search</button>
-  </section>
-
-  <main>
-    <section id="moviesContainer" class="movies-grid">
-      <!-- Movie cards will load here -->
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Discover Amazing Movies</h2>
+                <p class="hero-subtitle">Search through thousands of movies and TV shows with detailed information</p>
+                
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-container">
+                        <input type="text" 
+                               id="searchInput" 
+                               class="search-input" 
+                               placeholder="Search for movies or TV series... (e.g., Avengers, Stranger Things)"
+                               autocomplete="off">
+                        <div class="search-icon">🔍</div>
+                        <button class="clear-search" id="clearSearch" style="display: none;">✕</button>
+                    </div>
+                    
+                    <!-- Advanced Filters -->
+                    <div class="filters">
+                        <select id="yearFilter" class="filter-select">
+                            <option value="">All Years</option>
+                        </select>
+                        <select id="typeFilter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value="movie">Movies</option>
+                            <option value="series">TV Series</option>
+                            <option value="episode">Episodes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <!-- Modal -->
-  <div id="movieModal" class="modal">
-    <div class="modal-content">
-      <span class="closeBtn">&times;</span>
-      <div id="modalBody"></div>
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner"></div>
+            
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <h3>No movies found</h3>
+                <p>Try searching for a different title or check your spelling</p>
+            </div>
+
+            <!-- Results Info -->
+            <div class="results-info" id="resultsInfo" style="display: none;">
+                <h3 id="resultsCount"></h3>
+                <button class="back-to-top" id="backToTop">↑ Back to Top</button>
+            </div>
+
+            <!-- Movies Grid -->
+            <div class="movies-grid" id="moviesList"></div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="load-more-btn" id="loadMoreBtn">Load More Movies</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Movie Details Modal -->
+    <div id="movieModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="modalContent"></div>
+        </div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <p>✨ Project by <strong>Srinivas G</strong> | Built with HTML, CSS, JS</p>
-  </footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 FindMovies. Powered by OMDb API.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
