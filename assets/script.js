@@ -131,4 +131,30 @@ searchBtn.addEventListener("click", () => {
 searchInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") searchBtn.click();
 });
+// === Theme Toggle ===
+const themeToggle = document.getElementById('themeToggle');
+
+function setTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.textContent = '☀️ Light Mode';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = '🌙 Dark Mode';
+  }
+  localStorage.setItem('theme', theme);
+}
+
+// initialize on load
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('theme') || 'light';
+  setTheme(saved);
+});
+
+// toggle handler
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+
 
