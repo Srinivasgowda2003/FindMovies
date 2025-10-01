@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Movies Project</title>
-    <link rel="stylesheet" href="assets/style.css">
-    <script src="assets/script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Movies Project</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/script.js" defer></script>
 </head>
 <body class="light-theme">
 
-    <header>
-        <h1>Find Movies</h1>
-        <p>Search your favorite movies and see details!</p>
-        <button id="themeToggle">🌙 Dark Mode</button>
-    </header>
+  <header class="header">
+    <h1>🎬 Find Movies</h1>
+    <p>Discover your favorite movies with real-time info</p>
+    <button id="themeToggle">🌙 Dark Mode</button>
+  </header>
 
-    <section class="search">
-        <input type="text" id="searchInput" placeholder="Type movie name..." />
-<button id="searchBtn">Search</button>
-<div id="moviesContainer"></div>
-<div id="loading" class="hidden">Loading...</div>
-        
+  <section class="search">
+    <input type="text" id="searchInput" placeholder="🔍 Type a movie name...">
+    <button id="searchBtn">Search</button>
+  </section>
+
+  <main>
+    <section id="moviesContainer" class="movies-grid">
+      <!-- Movie cards will load here -->
     </section>
+  </main>
 
-    <section id="moviesContainer">
-        <!-- Movie cards appear here -->
-    </section>
-
-    <!-- Modal for movie details -->
-    <div id="movieModal" class="modal">
-        <div class="modal-content">
-            <span class="closeBtn">&times;</span>
-            <div id="modalBody"></div>
-        </div>
+  <!-- Modal -->
+  <div id="movieModal" class="modal">
+    <div class="modal-content">
+      <span class="closeBtn">&times;</span>
+      <div id="modalBody"></div>
     </div>
+  </div>
 
-    <footer>
-        <p>Project by Srinivas G | Built with HTML, CSS, JS</p>
-    </footer>
-
+  <footer class="footer">
+    <p>✨ Project by <strong>Srinivas G</strong> | Built with HTML, CSS, JS</p>
+  </footer>
 </body>
 </html>
