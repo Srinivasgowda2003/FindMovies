@@ -52,26 +52,19 @@ searchInput.addEventListener("keypress", (e) => {
 // -----------------------
 // Fetch Movies
 // -----------------------
-async function fetchMovies(query, page = 1) {
-    moviesContainer.innerHTML = "";
-    loading.classList.remove("hidden");
-
+async function fetchMovies(query) {
+    moviesContainer.innerHTML = 'Loading...';
     try {
-        const res = await fetch(`https://www.omdbapi.com/?s=${query}&page=${page}&apikey=${API_KEY}`);
+        const res = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
         const data = await res.json();
-        loading.classList.add("hidden");
-
-        if(data.Response === "True") {
-            displayMovies(data.Search);
-            displayPagination(data.totalResults);
-        } else {
-            moviesContainer.innerHTML = `<p class="no-results">No movies found for "${query}"</p>`;
-        }
+        console.log(data); // 👈 check what API returns
+        if(data.Response === "True") displayMovies(data.Search);
+        else moviesContainer.innerHTML = `<p>${data.Error}</p>`;
     } catch(err) {
-        loading.classList.add("hidden");
-        moviesContainer.innerHTML = `<p>Error fetching movies.</p>`;
+        moviesContainer.innerHTML = `<p>Error fetching movies: ${err.message}</p>`;
     }
 }
+
 
 // -----------------------
 // Display Movies
